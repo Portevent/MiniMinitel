@@ -1,6 +1,8 @@
 import serial
 
 from minitel.minitel import Minitel
+from minitel.minitel_controller import MinitelController
+
 
 def get_word(ser: serial.Serial):
     return ser.read() + ser.read()
@@ -20,8 +22,9 @@ def check_and_print(_min: Minitel, username: str, password: str):
     _min.writeAt(30, 30-len(s)//2, s)
 
 
-with Minitel() as minitel:
+with MinitelController() as minitel:
     minitel.clear()
+    minitel._teletel_to_teleinformatique()
 
     username, password = "",""
 
@@ -38,7 +41,7 @@ with Minitel() as minitel:
             clear_flag = False
 
         print_form(minitel, username, password)
-        minitel.cursorMove(5 + 10 + len(username if sel == 0 else password), 5 + sel)
+        minitel.cursorMoveTo(5 + 10 + len(username if sel == 0 else password), 5 + sel)
 
         if cr is None:
             cr = minitel.ser.read()

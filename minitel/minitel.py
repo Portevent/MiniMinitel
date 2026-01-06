@@ -316,7 +316,7 @@ class Minitel(SerialConnection):
         self._writeByte(b'\x61')
         # TODO : listen to anwser
 
-    def setAttribute(self, attribute):
+    def _setAttribute(self, attribute):
         self._writeESC()
         self._writeByte(attribute)
         if attribute == DOUBLE_HAUTEUR or attribute == DOUBLE_GRANDEUR:
