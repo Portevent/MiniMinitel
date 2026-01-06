@@ -6,8 +6,8 @@ class SerialConnection:
     Raw SerialConnection interface
     """
 
-    def __init__(self, baudrate=4800):
-        self.ser = serial.Serial('/dev/ttyUSB0', baudrate=baudrate, bytesize=7, parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE)
+    def __init__(self, port: str = '/dev/ttyUSB0', baudrate=4800):
+        self.ser = serial.Serial(port, baudrate=baudrate, bytesize=7, parity=serial.PARITY_EVEN, stopbits=serial.STOPBITS_ONE)
 
     def __enter__(self):
         return self
