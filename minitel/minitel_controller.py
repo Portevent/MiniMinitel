@@ -1,8 +1,7 @@
+from minitel.minitel_commands import MinitelCommands
 
-from minitel.minitel import Minitel
-
-class MinitelController(Minitel):
+class MinitelController(MinitelCommands):
 
     def writeAt(self, x: int, y: int, text: str):
-        self.cursorMoveTo(x, y);
+        self.cursorMoveTo(x, y)
         self.write(text)
