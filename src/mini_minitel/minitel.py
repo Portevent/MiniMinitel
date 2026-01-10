@@ -1,3 +1,4 @@
+from .C0 import ESC, Con, Coff, FF, SO, SI
 from .serial_connection import SerialConnection
 
 MODE_TELETEL_VIDEOTEX = 0 # Teletel Videotex mode, default when booting Minitel. Use 40 columns display
@@ -11,25 +12,19 @@ class Minitel(SerialConnection):
 
     mode = MODE_TELETEL_VIDEOTEX
 
-    def _writeESC(self):
-        """
-        Send ESC code, commonly used for prompting command
-        """
-        self._writeByte(b'\x1B')
-
     def _writeCSI(self):
         """
         Send Command Sequence Introducer code, commonly used for prompting command
         :return:
         """
-        self._writeByte(b'\x1B')
+        self._writeByte(ESC)
         self._writeByte(b'\x5B')
 
     def _videotex_to_mixte(self):
         """
         Switch from VideoTex to Mixte
         """
-        self._writeByte(b'\x1B')
+        self._writeByte(ESC)
         self._writeByte(b'\x3A')
         self._writeByte(b'\x32')
         self._writeByte(b'\x7D')
@@ -40,7 +35,7 @@ class Minitel(SerialConnection):
         """
         Switch from Mixte to VideoTex
         """
-        self._writeByte(b'\x1B')
+        self._writeByte(ESC)
         self._writeByte(b'\x3A')
         self._writeByte(b'\x32')
         self._writeByte(b'\x7E')
@@ -52,7 +47,7 @@ class Minitel(SerialConnection):
         Switch from Teletel (Mixte or VideoTex?) to Teleinformatique
         Can be done by user with Fnct + T then A (or then F for French ASCII)
         """
-        self._writeByte(b'\x1B')
+        self._writeByte(ESC)
         self._writeByte(b'\x3A')
         self._writeByte(b'\x31')
         self._writeByte(b'\x7D')
@@ -64,7 +59,7 @@ class Minitel(SerialConnection):
         Switch from Teleinformatique to VideoTex
         Can be done by user with Fnct + T then V
         """
-        self._writeByte(b'\x1B')
+        self._writeByte(ESC)
         self._writeByte(b'\x5B')
         self._writeByte(b'\x3F')
         self._writeByte(b'\x7B')
@@ -72,13 +67,13 @@ class Minitel(SerialConnection):
         self.mode = MODE_TELETEL_VIDEOTEX
 
     def cursorOn(self):
-        self._writeByte(b'\x11')
+        self._writeByte(Con)
 
     def cursorOff(self):
-        self._writeByte(b'\x14')
+        self._writeByte(Coff)
 
-    def clearScreen(self): # ??? Seems to be used by images
-        self._writeByte(b'\x0C')
+    def switchToG1(self): # Display images
+        self._writeByte(SO)
 
-    def teletelModeOn(self): # ???
-        self._writeByte(b'\x0E')
+    def revertToG0(self): # Revert to standart alphanum characters
+        self._writeByte(SI)
