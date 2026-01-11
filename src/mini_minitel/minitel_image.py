@@ -2,7 +2,7 @@ from random import random
 
 from PIL import Image
 
-from minitel.minitel_controller import MinitelController
+from src.mini_minitel.minitel_controller import MinitelController
 
 def pseudo_random(min_value: int, max_value: int, bias = 1):
     return min_value + int((max_value - min_value) * (random() ** bias))
@@ -158,9 +158,9 @@ class MinitelImage(MinitelController):
     def showImage(self, filepath: str, mode="resize", bg_color=(0, 0, 0)):
 
         self._writeByte(b'\x1B\x3B\x60\x58\x52')
-        self._writeByte(b'\x14')
+        self.cursorOff()
         self.clearScreen()
-        self.teletelModeOn()
+        self.switchToG1()
         self._writeByte(b'\x1B\x3A\x6A\x43')
 
         bg_color = minitel_color_names.get(bg_color, (0, 0, 0)) if mode == "center" else (0, 0, 0)
@@ -173,9 +173,9 @@ class MinitelImage(MinitelController):
     def showImageBuggy(self, filepath: str, mode="resize", bg_color=(0, 0, 0)):
 
         self._writeByte(b'\x1B\x3B\x60\x58\x52')
-        self._writeByte(b'\x14')
+        self.cursorOff()
         self.clearScreen()
-        self.teletelModeOn()
+        self.switchToG1()
         self._writeByte(b'\x1B\x3A\x6A\x43')
 
         bg_color = minitel_color_names.get(bg_color, (0, 0, 0)) if mode == "center" else (0, 0, 0)
