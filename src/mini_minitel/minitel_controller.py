@@ -2,6 +2,8 @@ from typing import Callable
 
 from src.mini_minitel.C0 import ESC, BS, LF, CAN, TAB, Sep
 from src.mini_minitel.minitel_csi import MinitelCSI
+from src.mini_minitel.minitel_dialog_code import MinitelInput, MinitelCode
+
 
 class MinitelController(MinitelCSI):
 
@@ -12,7 +14,7 @@ class MinitelController(MinitelCSI):
         self.cursorMoveTo(x, y)
         self.write(text)
 
-    on_read: Callable[[str], None]
+    on_read: Callable[[MinitelInput], None]
 
     def startListening(self):
         while True:
@@ -24,114 +26,116 @@ class MinitelController(MinitelCSI):
 
                 match word:
                     case b'OM':
-                        print('ENVOI')
+                        self.on_read(MinitelInput(MinitelCode.ENVOI))
 
                     case b'OP':
-                        print("SOMMAIRE")
+                        self.on_read(MinitelInput(MinitelCode.SOMMAIRE))
 
                     case b'OQ':
-                        print("ANNULATION")
+                        self.on_read(MinitelInput(MinitelCode.ANNULATION))
 
                     case b'OR':
-                        print("RETOUR")
+                        self.on_read(MinitelInput(MinitelCode.RETOUR))
 
                     case b'OS':
-                        print("REPETITION")
+                        self.on_read(MinitelInput(MinitelCode.REPETITION))
 
                     case b'Om':
-                        print('GUIDE')
+                        self.on_read(MinitelInput(MinitelCode.GUIDE))
 
                     case b'Ol':
-                        print("CORRECTION")
+                        self.on_read(MinitelInput(MinitelCode.CORRECTION))
 
                     case b'On':
-                        print("SUITE")
+                        self.on_read(MinitelInput(MinitelCode.SUITE))
 
                     case b'[A':
-                        print("MOVE UP")
+                        self.on_read(MinitelInput(MinitelCode.MOVE_UP))
 
                     case b'[B':
-                        print("MOVE DOWN")
+                        self.on_read(MinitelInput(MinitelCode.MOVE_DOWN))
 
                     case b'[C':
-                        print("MOVE RIGHT")
+                        self.on_read(MinitelInput(MinitelCode.MOVE_RIGHT))
 
                     case b'[D':
-                        print("MOVE LEFT")
+                        self.on_read(MinitelInput(MinitelCode.MOVE_LEFT))
 
                     case b'[H':
-                        print("GO BACK UP")
+                        self.on_read(MinitelInput(MinitelCode.GO_BACK_UP))
 
                     case b'[L':
-                        print("INSERT LINE")
+                        self.on_read(MinitelInput(MinitelCode.INSERT_LINE))
 
                     case b'[M':
-                        print("SUPPR LINE")
+                        self.on_read(MinitelInput(MinitelCode.SUPPR_LINE))
 
                     case b'[P':
-                        print("SUPPR COLUMN")
+                        self.on_read(MinitelInput(MinitelCode.SUPPR_COLUMN))
 
                     case b'[4':
                         word += self.ser.read()
-                        print(f"INSERT COLUMN {word}")
+                        # print(f"INSERT COLUMN {word}")
+                        self.on_read(MinitelInput(MinitelCode.INSERT_COLUMN, str(word)))
 
                     case b'[2':
                         word += self.ser.read()
-                        print(f"E.Page {word}")
+                        # print(f"E.Page {word}")
+                        self.on_read(MinitelInput(MinitelCode.E_Page, str(word)))
 
                     case _:
-                        print('unknown char: ' + str(word))
+                        self.on_read(MinitelInput(MinitelCode.UNKNOWN_CODE, str(word)))
 
             elif value == Sep: # Mode télétel
                 word = self.ser.read()
 
                 match word:
                     case b'A':
-                        print('ENVOI')
+                        self.on_read(MinitelInput(MinitelCode.ENVOI))
 
                     case b'F':
-                        print("SOMMAIRE")
+                        self.on_read(MinitelInput(MinitelCode.SOMMAIRE))
 
                     case b'E':
-                        print("ANNULATION")
+                        self.on_read(MinitelInput(MinitelCode.ANNULATION))
 
                     case b'B':
-                        print("RETOUR")
+                        self.on_read(MinitelInput(MinitelCode.RETOUR))
 
                     case b'C':
-                        print("REPETITION")
+                        self.on_read(MinitelInput(MinitelCode.REPETITION))
 
                     case b'D':
-                        print('GUIDE')
+                        self.on_read(MinitelInput(MinitelCode.GUIDE))
 
                     case b'G':
-                        print("CORRECTION")
+                        self.on_read(MinitelInput(MinitelCode.CORRECTION))
 
                     case b'H':
-                        print("SUITE")
+                        self.on_read(MinitelInput(MinitelCode.SUITE))
 
                     case b'Y':
-                        print("CONNEXION")
+                        self.on_read(MinitelInput(MinitelCode.CONNEXION))
 
                     case _:
-                        print('unknown char: ' + str(word))
+                        self.on_read(MinitelInput(MinitelCode.UNKNOWN_CODE, str(word)))
             else:
                 # Can't add this check in match, as match value: case BS: will map value onto BS
                 if value == BS:
-                    print("BS")  # Ctrl + H
+                    self.on_read(MinitelInput(MinitelCode.BS))  # Ctrl + H
                 elif value == LF:
-                    print("LF") # Ctrl + J
+                    self.on_read(MinitelInput(MinitelCode.LF)) # Ctrl + J
                 elif value == CAN:
-                    print("CAN") # Ctrl + X
+                    self.on_read(MinitelInput(MinitelCode.CAN)) # Ctrl + X
                 elif value == TAB:
-                    print("TAB") # Ctrl + I
+                    self.on_read(MinitelInput(MinitelCode.TAB)) # Ctrl + I
                 else:
                     match value:
                         case b'\x00':
-                            print("BRK") # Ctrl + Connexion
+                            self.on_read(MinitelInput(MinitelCode.BRK)) # Ctrl + Connexion
                         case b'\x7f':
-                            print("DELETE") # Ctrl + Connexion
+                            self.on_read(MinitelInput(MinitelCode.DELETE)) # Ctrl + Connexion
                         case b'\r':
-                            print("CARRIAGE RETURN") # ENTER
+                            self.on_read(MinitelInput(MinitelCode.CARRIAGE_RETURN)) # ENTER
                         case _:
-                            print(f"Input : ({value.decode()})")
+                            self.on_read(MinitelInput(MinitelCode.TEXT, str(value)))
