@@ -1,1 +1,1 @@
-from .minitel import Minitel
+from .mini_minitel import MiniMinitel

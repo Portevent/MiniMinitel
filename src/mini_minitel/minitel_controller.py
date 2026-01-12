@@ -1,30 +1,61 @@
 from typing import Callable
 
 from src.mini_minitel.C0 import ESC, BS, LF, CAN, TAB, Sep
-from src.mini_minitel.minitel_csi import MinitelCSI
 from src.mini_minitel.minitel_dialog_code import MinitelInput, MinitelCode
+from src.mini_minitel.minitel_videotex_attributes import MinitelVideotexAttributes
 
 
-class MinitelController(MinitelCSI):
+class MinitelController(MinitelVideotexAttributes):
 
     def write(self, text: str):
-        self._writeByte(bytes(text, encoding="ascii"))
+        """
+        Write text on Minitel
+        :param text: text
+        """
+        self._write_byte(bytes(text, encoding="ascii"))
 
-    def writeAt(self, x: int, y: int, text: str):
-        self.cursorMoveTo(x, y)
+    def write_at(self, x: int, y: int, text: str) -> None:
+        """
+        Move cursor to position and write to
+        :param x: Column
+        :param y: Row
+        :param text: Text
+        """
+        self.cursor_move_to(x, y)
         self.write(text)
 
-    def writeDoubleGrandeur(self, text: str):
-        self.setDoubleGrandeur()
+    def write_double_grandeur(self, text: str) -> None:
+        """
+        Write with double grandeur
+        :param text: Text
+        """
+        self.set_double_grandeur()
         self.write(text)
-        self.setGrandeurNormale()
+        self.set_grandeur_normale()
 
-    def writeDoubleLargeur(self, text: str):
-        self.setDoubleLargeur()
+    def write_double_largeur(self, text: str):
+        """
+        Write with double largeur
+        :param text: Text
+        """
+        self.set_double_largeur()
         self.write(text)
-        self.setGrandeurNormale()
+        self.set_grandeur_normale()
 
-    def startListening(self, on_read: Callable[[MinitelInput], None]):
+    def write_double_hauteur(self, text: str):
+        """
+        Write with double hauteur
+        :param text: Text
+        """
+        self.set_double_hauteur()
+        self.write(text)
+        self.set_grandeur_normale()
+
+    def start_listening(self, on_read: Callable[[MinitelInput], None]):
+        """
+        Listen to port and pass MinitelInput to callback
+        :param on_read: Action to perform on read
+        """
         value = self.ser.read_all() # Clear buffer before, usefull to get rid of bootup code
         # print(f"READALL -> {value}")
 

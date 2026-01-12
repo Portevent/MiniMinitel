@@ -1,77 +1,75 @@
 from .C0 import LF, VT, BS, TAB, CR, RS, FF, US, CAN, BEL, ESC
-from .minitel import Minitel
+from .minitelinterfacing import MinitelInterfacing
 
-DEL = b'\x7F' # Ctrl + <-
-
-class MinitelVideotex(Minitel):
+class MinitelVideotex(MinitelInterfacing):
     """
     Basic Minitel Videotex commands
     """
 
     def write(self, text: str):
-        self._writeByte(bytes(text, encoding="ascii"))
+        self._write_byte(bytes(text, encoding="ascii"))
 
-    def shiftCursorDown(self):
+    def shift_cursor_down(self):
         """
         Move cursor down one time
         """
-        self._writeByte(LF)
+        self._write_byte(LF)
 
-    def shiftCursorUp(self):
+    def shift_cursor_up(self):
         """
         Move cursor right one time
         """
-        self._writeByte(VT)
+        self._write_byte(VT)
 
-    def shiftCursorLeft(self):
+    def shift_cursor_left(self):
         """
         Move cursor left one time
         """
-        self._writeByte(BS)
+        self._write_byte(BS)
 
-    def shiftCursorRight(self):
+    def shift_cursor_right(self):
         """
         Move cursor left one time
         """
-        self._writeByte(TAB)
+        self._write_byte(TAB)
 
-    def cariageReturn(self):
+    def cariage_return(self):
         """
         Move cursor to start of the line (sometimes called Origin)
         """
-        self._writeByte(CR)
+        self._write_byte(CR)
 
-    def returnToTopLeft(self):
+    def return_to_top_left(self):
         """
         (also called RS) Move cursor to start of first row. Explicit article separator
         """
-        self._writeByte(RS)
+        self._write_byte(RS)
 
-    def explicitArticleSeparator(self):
+    def explicit_article_separator(self):
         """
         (also called US) Explicit article separator
         """
-        self._writeByte(US)
+        self._write_byte(US)
 
-    def completeToEndOfLine(self):
+    def complete_to_end_of_line(self):
         """
         (also called CAN) Write spaces from cursor to end of line (doesn't move cursor)
         """
-        self._writeByte(CAN)
+        self._write_byte(CAN)
 
     def clear(self): # Clear screen, go to top left, reset attributes
-        self._writeByte(FF)
+        self._write_byte(FF)
 
-    def ringBel(self) -> None:
+    def ring_bel(self) -> None:
         """
         Do a quick sound
         """
-        self._writeByte(BEL)
+        self._write_byte(BEL)
 
-    def askCursorPos(self):
+    def ask_cursor_pos(self):
         """
         Ask current cursor position
         """
-        self._writeByte(ESC)
-        self._writeByte(b'\x61')
+        self._write_byte(ESC)
+        self._write_byte(b'\x61')
         # TODO : listen to anwser

@@ -1,5 +1,6 @@
-import serial
+from typing import List
 
+import serial
 
 class SerialConnection:
     """
@@ -15,16 +16,17 @@ class SerialConnection:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.ser.close()
 
-    def _writeByte(self, byte: bytes):
+    def _write_byte(self, byte: bytes):
+        """
+        Send byte over serial connection
+        :param byte: Bytes to send
+        """
         self.ser.write(byte)
 
-    def _writeWord(self, bits: bytes):
-        self._writeByte(bits[1])
-        self._writeByte(bits[0])
 
-    def _writeBytesP(self, n: int):
+    def _write_bytes_p(self, n: int):
         if n <= 9:
-            self._writeByte((0x30 + n).to_bytes(1, "big"))
+            self._write_byte((0x30 + n).to_bytes(1, "big"))
         else :
-            self._writeByte((0x30 + (n // 10)).to_bytes(1, "big"))
-            self._writeByte((0x30 + (n % 10)).to_bytes(1, "big"))
+            self._write_byte((0x30 + (n // 10)).to_bytes(1, "big"))
+            self._write_byte((0x30 + (n % 10)).to_bytes(1, "big"))

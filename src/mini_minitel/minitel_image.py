@@ -63,7 +63,7 @@ minitel_color_names = {
 
 class MinitelImage(MinitelController):
 
-    def convert_image_to_minitel_palette(self, image):
+    def _convert_image_to_minitel_palette(self, image):
         image = image.convert("RGB")
         pixels = image.load()
         for y in range(image.height):
@@ -74,7 +74,7 @@ class MinitelImage(MinitelController):
                 pixels[x, y] = closest_color
         return image
 
-    def get_preview_image(self, filepath, mode="resize", bg_color=(0, 0, 0)):
+    def _get_preview_image(self, filepath, mode="resize", bg_color=(0, 0, 0)):
         image = Image.open(filepath)
         image = image.convert("RGB")
         target_width, target_height = 80, 72
@@ -95,11 +95,11 @@ class MinitelImage(MinitelController):
             new_img.paste(image, (left, top))
             image = new_img
 
-        image = self.convert_image_to_minitel_palette(image)
+        image = self._convert_image_to_minitel_palette(image)
         return image
 
-    def image_to_G1_row(self, filepath, mode="resize", bg_color=(0, 0, 0)):
-        image = self.get_preview_image(filepath, mode, bg_color)
+    def _image_to_g1_row(self, filepath, mode="resize", bg_color=(0, 0, 0)):
+        image = self._get_preview_image(filepath, mode, bg_color)
         mosaic_hex_list = []
         mosaic_hex = ""
         target_width, target_height = 80, 72
@@ -128,8 +128,8 @@ class MinitelImage(MinitelController):
             mosaic_hex = ""
         return mosaic_hex_list
 
-    def image_to_G1(self, filepath, mode="resize", bg_color=(0, 0, 0)):
-        image = self.get_preview_image(filepath, mode, bg_color)
+    def _image_to_g1(self, filepath, mode="resize", bg_color=(0, 0, 0)):
+        image = self._get_preview_image(filepath, mode, bg_color)
         mosaic_hex = ""
         target_width, target_height = 80, 72
         for y in range(0, target_height, 3):
@@ -155,35 +155,47 @@ class MinitelImage(MinitelController):
                 mosaic_hex += cell
         return mosaic_hex
 
-    def showImage(self, filepath: str, mode="resize", bg_color=(0, 0, 0)):
+    def display_image(self, filepath: str, mode="resize", bg_color=(0, 0, 0)) -> None:
+        """
+        Display image
+        :param filepath: path to image
+        :param mode: center or resize
+        :param bg_color: background color (default is black)
+        """
 
-        self._writeByte(b'\x1B\x3B\x60\x58\x52')
-        self.cursorOff()
-        self.clearScreen()
-        self.switchToG1()
-        self._writeByte(b'\x1B\x3A\x6A\x43')
+        self._write_byte(b'\x1B\x3B\x60\x58\x52')
+        self.cursor_off()
+        self.clear_screen()
+        self.switch_to_g1()
+        self._write_byte(b'\x1B\x3A\x6A\x43')
 
         bg_color = minitel_color_names.get(bg_color, (0, 0, 0)) if mode == "center" else (0, 0, 0)
 
-        mosaic_hex = self.image_to_G1(filepath, mode, bg_color)
+        mosaic_hex = self._image_to_g1(filepath, mode, bg_color)
         data_bytes = bytes.fromhex(mosaic_hex)
-        self._writeByte(data_bytes)
+        self._write_byte(data_bytes)
 
 
-    def showImageBuggy(self, filepath: str, mode="resize", bg_color=(0, 0, 0)):
+    def show_image_buggy(self, filepath: str, mode="resize", bg_color=(0, 0, 0)):
+        """
+        Display image in a buggy way (will animate forever)
+        :param filepath: path to image
+        :param mode: center or resize
+        :param bg_color: background color (default is black)
+        """
 
-        self._writeByte(b'\x1B\x3B\x60\x58\x52')
-        self.cursorOff()
-        self.clearScreen()
-        self.switchToG1()
-        self._writeByte(b'\x1B\x3A\x6A\x43')
+        self._write_byte(b'\x1B\x3B\x60\x58\x52')
+        self.cursor_off()
+        self.clear_screen()
+        self.switch_to_g1()
+        self._write_byte(b'\x1B\x3A\x6A\x43')
 
         bg_color = minitel_color_names.get(bg_color, (0, 0, 0)) if mode == "center" else (0, 0, 0)
 
-        mosaic_hex = self.image_to_G1_row(filepath, mode, bg_color)
+        mosaic_hex = self._image_to_g1_row(filepath, mode, bg_color)
         data_bytes = [bytes.fromhex(mosaic) for mosaic in mosaic_hex]
         for line in data_bytes:
-            self._writeByte(line)
+            self._write_byte(line)
 
         queue = []
 
@@ -218,5 +230,5 @@ class MinitelImage(MinitelController):
                 x, y, line, fromByte, toByte, offset = queue.pop(0)
                 self.cursorMove(x, y)
                 for i in range(offset):
-                    self._writeByte(empty)
-                self._writeByte(data_bytes[line][fromByte:toByte])
+                    self._write_byte(empty)
+                self._write_byte(data_bytes[line][fromByte:toByte])
