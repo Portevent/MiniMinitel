@@ -1,4 +1,4 @@
-from src.miniminitel.minitel_image import MinitelImage
+from .minitel_image import MinitelImage
 
 
 class MiniMinitel(MinitelImage):

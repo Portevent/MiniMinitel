@@ -1,8 +1,8 @@
 from typing import Callable
 
-from src.miniminitel.C0 import ESC, BS, LF, CAN, TAB, Sep
-from src.miniminitel.minitel_dialog_code import MinitelInput, MinitelCode
-from src.miniminitel.minitel_videotex_attributes import MinitelVideotexAttributes
+from .C0 import ESC, BS, LF, CAN, TAB, Sep
+from .minitel_dialog_code import MinitelInput, MinitelCode
+from .minitel_videotex_attributes import MinitelVideotexAttributes
 
 
 class MinitelController(MinitelVideotexAttributes):
@@ -61,7 +61,7 @@ class MinitelController(MinitelVideotexAttributes):
 
         while True:
             value = self.ser.read()
-            print(f" -> {value}")
+            # print(f" -> {value}")
 
             if value == ESC: # Mode téléinformatique
                 word = self.ser.read() + self.ser.read()
