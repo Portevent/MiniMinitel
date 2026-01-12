@@ -2,7 +2,7 @@ from random import random
 
 from PIL import Image
 
-from src.mini_minitel.minitel_controller import MinitelController
+from src.miniminitel.minitel_controller import MinitelController
 
 def pseudo_random(min_value: int, max_value: int, bias = 1):
     return min_value + int((max_value - min_value) * (random() ** bias))

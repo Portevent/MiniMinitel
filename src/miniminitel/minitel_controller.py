@@ -1,8 +1,8 @@
 from typing import Callable
 
-from src.mini_minitel.C0 import ESC, BS, LF, CAN, TAB, Sep
-from src.mini_minitel.minitel_dialog_code import MinitelInput, MinitelCode
-from src.mini_minitel.minitel_videotex_attributes import MinitelVideotexAttributes
+from src.miniminitel.C0 import ESC, BS, LF, CAN, TAB, Sep
+from src.miniminitel.minitel_dialog_code import MinitelInput, MinitelCode
+from src.miniminitel.minitel_videotex_attributes import MinitelVideotexAttributes
 
 
 class MinitelController(MinitelVideotexAttributes):

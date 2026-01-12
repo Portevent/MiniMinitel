@@ -7,22 +7,19 @@ MiniMinitel is a simple Minitel interface in python. It has been created with th
 > MiniMinitel is a work in progress, no version are published to PyPI yet
 
 ```python
-from minitel import DOUBLE_GRANDEUR, CLIGNOTEMENT, MAJENTA, BLANC, GRANDEUR_NORMALE, MinitelController
-# with MinitelController(port, baudrate)
-with MinitelController("COM4") as minitel:
-    minitel.returnToTopLeftAndClearScreen()
-    minitel.cursorMoveTo(4, 4)
+from miniminitel import MiniMinitel
 
-    minitel._setAttribute(DOUBLE_GRANDEUR)
-    minitel._setAttribute(MAJENTA)
-    minitel.write("Example")
-    minitel._setAttribute(BLANC)
-    minitel.write(" text")
+with MiniMinitel("COM4") as minitel:
+    minitel.clear()
+    
+    minitel.cursor_move_to(4, 4)
+    minitel.write_double_grandeur("Hello world")
 
-    minitel.cursorMoveTo(6, 6)
-    minitel._setAttribute(GRANDEUR_NORMALE)
-    minitel._setAttribute(CLIGNOTEMENT)
-    minitel.write("Hello world")
+    minitel.write_at(6, 6, "I'm a MiniMinitel")
+    minitel.set_blinking()
+    minitel.write_at(6, 7, "And I look cool")
+    minitel.set_non_blinking()
+
 ```
 
 # Setup

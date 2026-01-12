@@ -1,0 +1,1 @@
+from .miniminitel import MiniMinitel
