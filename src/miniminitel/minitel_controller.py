@@ -7,13 +7,6 @@ from .minitel_videotex_attributes import MinitelVideotexAttributes
 
 class MinitelController(MinitelVideotexAttributes):
 
-    def write(self, text: str):
-        """
-        Write text on Minitel
-        :param text: text
-        """
-        self._write_byte(bytes(text, encoding="ascii"))
-
     def write_at(self, x: int, y: int, text: str) -> None:
         """
         Move cursor to position and write to

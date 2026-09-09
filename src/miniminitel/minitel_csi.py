@@ -3,6 +3,7 @@ from .minitel_videotex import MinitelVideotex
 class MinitelCSI(MinitelVideotex):
     """
     Minitel CSI commands
+    Command Sequence Introducer
     """
 
     def move_cursor_up(self, n: int = 1):

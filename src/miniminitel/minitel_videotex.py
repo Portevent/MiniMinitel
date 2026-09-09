@@ -7,6 +7,10 @@ class MinitelVideotex(MinitelInterfacing):
     """
 
     def write(self, text: str):
+        """
+        Write text on Minitel
+        :param text: text
+        """
         self._write_byte(bytes(text, encoding="ascii"))
 
     def shift_cursor_down(self):
