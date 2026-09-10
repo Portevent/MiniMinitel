@@ -11,7 +11,7 @@ classifiers = [
     "Programming Language :: Python :: 3"
 ]
 license = "MIT"
-license-files = ["LICEN[CS]E*"]
+license-files = ["LICENSE"]
 dependencies = [
   "pillow",
   "pyserial"
